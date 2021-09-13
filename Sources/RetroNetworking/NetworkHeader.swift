@@ -9,6 +9,11 @@
 import Foundation
 
 public struct NetworkHeader {
-    let key: String
-    let value: String
+    internal let key: String
+    internal let value: String
+    
+    public init(key: String, value: String) {
+        self.key = key
+        self.value = value
+    }
 }
