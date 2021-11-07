@@ -8,46 +8,29 @@
 
 import Foundation
 
+@available(iOS 15.0.0, *)
+@available(macOS 12.0.0, *)
+@available(watchOS 8.0.0, *)
+@available(tvOS 15.0.0, *)
 public struct NetworkRequestService {
-    static public func makeRequestWith(url: URL, headers: [NetworkHeader], completion: @escaping (Result<Data, Error>) -> Void) {
+    static public func makeRequestWith(url: URL, headers: [NetworkHeader] = []) async throws -> Data {
         var request = URLRequest(url: url)
         for header in headers {
             request.setValue(header.value, forHTTPHeaderField: header.key)
         }
-
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-
-            DispatchQueue.main.async {
-                if let error = error {
-                    completion(.failure(error))
-                    return
-                }
-
-                guard let data = data
-                else {
-                    let error = NSError.with(description: "No data returned")
-                    completion(.failure(error))
-                    return
-                }
-                
-                completion(.success(data))
-            }
-        }
         
-        task.resume()
+        return try await URLSession.shared.data(for: request, delegate: nil).0
     }
     
-    static public func makeRequestWith(baseURLString: String, headers: [NetworkHeader], parameters: [URLQueryItem], completion: @escaping (Result<Data, Error>) -> Void) {
+    static public func makeRequestWith(baseURLString: String, headers: [NetworkHeader] = [], parameters: [URLQueryItem] = []) async throws -> Data {
         guard let urlWithParameters = makeURLWith(baseURLString: baseURLString, parameters: parameters) else {
-            let error = NSError.with(description: "Invalid URL")
-            completion(.failure(error))
-            return
+            throw NSError.with(description: "Invalid URL")
         }
         
-        makeRequestWith(url: urlWithParameters, headers: headers, completion: completion)
+        return try await makeRequestWith(url: urlWithParameters, headers: headers)
     }
     
-    static public func makeURLWith(baseURLString: String, parameters: [URLQueryItem]) -> URL? {
+    static public func makeURLWith(baseURLString: String, parameters: [URLQueryItem] = []) -> URL? {
         guard var components = URLComponents(string: baseURLString) else { return nil }
         
         components.queryItems = parameters

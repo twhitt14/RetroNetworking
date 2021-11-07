@@ -1,5 +1,5 @@
 //
-//  RetroNetworkingTests.swift
+//  RetroNetworkingMakeURLTests.swift
 //
 //
 //  Created by Trevor Whittingham on 9/13/21.
@@ -9,7 +9,12 @@
 import XCTest
 import RetroNetworking
 
-final class RetroNetworkingTests: XCTestCase {
+@available(iOS 15.0.0, *)
+@available(macOS 12.0.0, *)
+@available(watchOS 8.0.0, *)
+@available(tvOS 15.0.0, *)
+final class RetroNetworkingMakeURLTests: XCTestCase {
+    
     func testMakeURL1() {
         let urlString = "https://www.google.com"
         let parameters = [URLQueryItem]()
