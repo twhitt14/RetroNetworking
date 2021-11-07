@@ -37,7 +37,7 @@ public struct NetworkRequestService {
         task.resume()
     }
     
-    static public func makeRequestWith(baseURLString: String, headers: [NetworkHeader], parameters: [NetworkParameter], completion: @escaping (Result<Data, Error>) -> Void) {
+    static public func makeRequestWith(baseURLString: String, headers: [NetworkHeader], parameters: [URLQueryItem], completion: @escaping (Result<Data, Error>) -> Void) {
         guard let urlWithParameters = makeURLWith(baseURLString: baseURLString, parameters: parameters) else {
             let error = NSError.with(description: "Invalid URL")
             completion(.failure(error))
@@ -47,18 +47,11 @@ public struct NetworkRequestService {
         makeRequestWith(url: urlWithParameters, headers: headers, completion: completion)
     }
     
-    static public func makeURLWith(baseURLString: String, parameters: [NetworkParameter]) -> URL? {
-        var urlStringWithParameters = baseURLString
-        if !parameters.isEmpty {
-            urlStringWithParameters += "?"
-            for (index, parameter) in parameters.enumerated() {
-                if index > 0 {
-                    urlStringWithParameters += "&"
-                }
-                urlStringWithParameters += "\(parameter.key)=\(parameter.value)"
-            }
-        }
+    static public func makeURLWith(baseURLString: String, parameters: [URLQueryItem]) -> URL? {
+        guard var components = URLComponents(string: baseURLString) else { return nil }
         
-        return URL(string: urlStringWithParameters)
+        components.queryItems = parameters
+        
+        return components.url
     }
 }

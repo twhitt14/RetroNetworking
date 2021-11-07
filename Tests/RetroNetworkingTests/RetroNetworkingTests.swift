@@ -12,20 +12,20 @@ import RetroNetworking
 final class RetroNetworkingTests: XCTestCase {
     func testMakeURL1() {
         let urlString = "https://www.google.com"
-        let parameters = [NetworkParameter]()
+        let parameters = [URLQueryItem]()
         
         guard let url = NetworkRequestService.makeURLWith(baseURLString: urlString, parameters: parameters) else {
             XCTFail("URL could not be created")
             return
         }
         
-        XCTAssertEqual("https://www.google.com", url.absoluteString)
+        XCTAssertEqual("https://www.google.com?", url.absoluteString)
     }
     
     func testMakeURL2() {
         let urlString = "https://www.google.com"
         let parameters = [
-            NetworkParameter(key: "key1", value: "value1"),
+            URLQueryItem(name: "key1", value: "value1"),
         ]
         
         guard let url = NetworkRequestService.makeURLWith(baseURLString: urlString, parameters: parameters) else {
@@ -39,8 +39,8 @@ final class RetroNetworkingTests: XCTestCase {
     func testMakeURL3() {
         let urlString = "https://www.google.com"
         let parameters = [
-            NetworkParameter(key: "key1", value: "value1"),
-            NetworkParameter(key: "key2", value: "value2"),
+            URLQueryItem(name: "key1", value: "value1"),
+            URLQueryItem(name: "key2", value: "value2"),
         ]
         
         guard let url = NetworkRequestService.makeURLWith(baseURLString: urlString, parameters: parameters) else {
